@@ -76,7 +76,8 @@ function publishDiscoveryForTask(plant: Plant, task: CareTask) {
 
   const nextDueConfig = {
     unique_id: `${deviceId}_${task.id}_next_due`,
-    name: `${plant.name} ${label} next due`,
+    has_entity_name: true,
+    name: `${label} next due`,
     state_topic: `${topicBase}/next_due`,
     device_class: 'date',
     device,
@@ -89,7 +90,8 @@ function publishDiscoveryForTask(plant: Plant, task: CareTask) {
 
   const overdueConfig = {
     unique_id: `${deviceId}_${task.id}_overdue`,
-    name: `${plant.name} ${label} overdue`,
+    has_entity_name: true,
+    name: `${label} overdue`,
     state_topic: `${topicBase}/overdue`,
     payload_on: 'ON',
     payload_off: 'OFF',

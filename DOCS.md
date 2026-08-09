@@ -42,7 +42,7 @@ Manual**, then paste):
 ```yaml
 type: markdown
 title: 🌿 Plant Care Status
-content: >-
+content: |-
   {%- set rows = namespace(items=[]) -%}
   {%- for state in states.sensor -%}
     {%- if state.entity_id.endswith('_next_due') and state.attributes.device_class == 'date' -%}
@@ -66,7 +66,7 @@ content: >-
 ```yaml
 type: markdown
 title: 💧 Next Up Watering
-content: >-
+content: |-
   {%- set rows = namespace(items=[]) -%}
   {%- for state in states.sensor -%}
     {%- if state.entity_id.endswith('_watering_next_due') -%}
