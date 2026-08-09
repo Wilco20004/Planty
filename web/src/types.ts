@@ -42,6 +42,8 @@ export interface Plant {
   light_requirement: LightRequirement | null;
   photo_path: string | null;
   notes: string | null;
+  perenual_species_id: number | null;
+  custom_species_id: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -65,6 +67,53 @@ export interface MqttStatus {
   status: 'disconnected' | 'connecting' | 'connected' | 'error';
   error: string | null;
   connected: boolean;
+}
+
+export interface PlantLookupSettings {
+  api_key: string | null;
+}
+
+export type PlantLookupSource = 'perenual' | 'custom';
+
+export interface PlantLookupMatch {
+  id: number | string;
+  source: PlantLookupSource;
+  common_name: string;
+  scientific_name: string | null;
+  thumbnail: string | null;
+}
+
+export interface SpeciesInfo {
+  common_name: string;
+  scientific_name: string | null;
+  thumbnail: string | null;
+  light_requirement: LightRequirement | null;
+  sunlight_description: string | null;
+  watering_interval_days: number | null;
+  watering_description: string | null;
+  family: string | null;
+  plant_type: string | null;
+  cycle: string | null;
+  origin: string | null;
+  dimensions: string | null;
+  description: string | null;
+  care_level: string | null;
+  growth_rate: string | null;
+  drought_tolerant: boolean | null;
+  indoor: boolean | null;
+  poisonous_to_humans: boolean | null;
+  poisonous_to_pets: boolean | null;
+  pruning_months: string | null;
+}
+
+export interface PlantLookupDetail extends SpeciesInfo {
+  id: number;
+}
+
+export interface CustomSpecies extends SpeciesInfo {
+  id: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export const LIGHT_LABELS: Record<LightRequirement, string> = {

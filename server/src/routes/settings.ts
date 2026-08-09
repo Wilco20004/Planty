@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { getMqttSettings, getMqttStatus, saveMqttSettings } from '../services/mqtt';
+import { getPlantLookupSettings, savePlantLookupSettings } from '../services/plantLookup';
 
 export const settingsRouter = Router();
 
@@ -22,4 +23,12 @@ settingsRouter.put('/mqtt', (req, res) => {
 
 settingsRouter.get('/mqtt/status', (_req, res) => {
   res.json(getMqttStatus());
+});
+
+settingsRouter.get('/plant-lookup', (_req, res) => {
+  res.json(getPlantLookupSettings());
+});
+
+settingsRouter.put('/plant-lookup', (req, res) => {
+  res.json(savePlantLookupSettings({ api_key: req.body.api_key ?? null }));
 });

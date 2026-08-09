@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { api } from '../api/client';
-import { MqttSettings, MqttStatus } from '../types';
+import { MqttSettings, MqttStatus, PlantLookupSettings } from '../types';
 
 export default function Settings() {
   const [form, setForm] = useState<MqttSettings | null>(null);
@@ -8,12 +8,18 @@ export default function Settings() {
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
+  const [lookupForm, setLookupForm] = useState<PlantLookupSettings | null>(null);
+  const [lookupError, setLookupError] = useState<string | null>(null);
+  const [lookupSaved, setLookupSaved] = useState(false);
+  const [lookupSaving, setLookupSaving] = useState(false);
+
   function loadStatus() {
     api.getMqttStatus().then(setStatus).catch(() => {});
   }
 
   useEffect(() => {
     api.getMqttSettings().then(setForm).catch((e) => setError(e.message));
+    api.getPlantLookupSettings().then(setLookupForm).catch((e) => setLookupError(e.message));
     loadStatus();
     const interval = setInterval(loadStatus, 5000);
     return () => clearInterval(interval);
@@ -35,9 +41,27 @@ export default function Settings() {
     }
   }
 
+  async function handleLookupSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!lookupForm) return;
+    setLookupSaving(true);
+    setLookupError(null);
+    setLookupSaved(false);
+    try {
+      const saved = await api.savePlantLookupSettings(lookupForm);
+      setLookupForm(saved);
+      setLookupSaved(true);
+    } catch (e: any) {
+      setLookupError(e.message);
+    } finally {
+      setLookupSaving(false);
+    }
+  }
+
   if (!form) return <p>Loading...</p>;
 
   return (
+    <>
     <div className="card form-card">
       <h2>Home Assistant / MQTT</h2>
       <p className="muted">
@@ -98,5 +122,38 @@ export default function Settings() {
         </button>
       </form>
     </div>
+
+    <div className="card form-card">
+      <h2>Plant lookup (Perenual)</h2>
+      <p className="muted">
+        Powers the species autocomplete on the "Add a plant" form: as you type a plant name, Planty fixes the
+        spelling and pulls its scientific name, light needs, and a suggested watering interval from{' '}
+        <a href="https://perenual.com/docs/api" target="_blank" rel="noreferrer">
+          Perenual's plant database
+        </a>
+        . Sign up there for a free API key (100 requests/day) and paste it below.
+      </p>
+      {lookupError && <p className="error">{lookupError}</p>}
+      {lookupForm && (
+        <form onSubmit={handleLookupSubmit}>
+          <label>
+            Perenual API key
+            <input
+              value={lookupForm.api_key || ''}
+              onChange={(e) => {
+                setLookupSaved(false);
+                setLookupForm({ ...lookupForm, api_key: e.target.value });
+              }}
+              placeholder="paste your API key here"
+            />
+          </label>
+          <button className="button" type="submit" disabled={lookupSaving}>
+            {lookupSaving ? 'Saving...' : 'Save'}
+          </button>
+          {lookupSaved && <span className="muted small" style={{ marginLeft: '0.6rem' }}>Saved.</span>}
+        </form>
+      )}
+    </div>
+    </>
   );
 }

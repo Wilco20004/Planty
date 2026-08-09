@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { api } from '../api/client';
-import { CareTaskType, LIGHT_LABELS, PlantWithTasks, SensorType, TASK_TYPE_LABELS } from '../types';
+import { CareTaskType, LIGHT_LABELS, PlantWithTasks, SensorType, SpeciesInfo, TASK_TYPE_LABELS } from '../types';
 import StatusBadge from '../components/StatusBadge';
 
 const TASK_TYPES = Object.keys(TASK_TYPE_LABELS) as CareTaskType[];
@@ -16,12 +16,54 @@ export default function PlantDetail() {
   const [newTask, setNewTask] = useState({ task_type: 'watering' as CareTaskType, label: '', interval_days: 7 });
   const [newSensor, setNewSensor] = useState({ type: 'moisture' as SensorType, name: '', mqtt_topic: '', unit: '' });
 
+  const [speciesInfo, setSpeciesInfo] = useState<SpeciesInfo | null>(null);
+  const [speciesInfoError, setSpeciesInfoError] = useState<string | null>(null);
+  const [speciesInfoLoading, setSpeciesInfoLoading] = useState(false);
+  const [savingToDatabase, setSavingToDatabase] = useState(false);
+
   function reload() {
     if (!id) return;
     api.getPlant(id).then(setPlant).catch((e) => setError(e.message));
   }
 
   useEffect(reload, [id]);
+
+  function loadSpeciesInfo() {
+    if (!plant) return;
+    setSpeciesInfoLoading(true);
+    setSpeciesInfoError(null);
+    const request = plant.custom_species_id
+      ? api.getCustomSpecies(plant.custom_species_id)
+      : plant.perenual_species_id
+        ? api.getPlantLookupDetail(plant.perenual_species_id)
+        : null;
+    request
+      ?.then(setSpeciesInfo)
+      .catch((e) => setSpeciesInfoError(e.message))
+      .finally(() => setSpeciesInfoLoading(false));
+  }
+
+  useEffect(() => {
+    setSpeciesInfo(null);
+    setSpeciesInfoError(null);
+    if (plant?.custom_species_id || plant?.perenual_species_id) {
+      loadSpeciesInfo();
+    }
+  }, [plant?.custom_species_id, plant?.perenual_species_id]);
+
+  async function handleSaveToMyDatabase() {
+    if (!speciesInfo || !id) return;
+    setSavingToDatabase(true);
+    try {
+      const saved = await api.createCustomSpecies(speciesInfo);
+      await api.updatePlant(id, { custom_species_id: saved.id, perenual_species_id: null });
+      reload();
+    } catch (e: any) {
+      setSpeciesInfoError(e.message);
+    } finally {
+      setSavingToDatabase(false);
+    }
+  }
 
   if (error) return <p className="error">{error}</p>;
   if (!plant) return <p>Loading...</p>;
@@ -83,6 +125,114 @@ export default function PlantDetail() {
           </div>
         </div>
       </div>
+
+      {(plant.perenual_species_id || plant.custom_species_id) && (
+        <section className="card">
+          <h2>About this plant</h2>
+          {speciesInfoError && (
+            <p className="error">
+              {speciesInfoError}{' '}
+              <button type="button" className="button small secondary" disabled={speciesInfoLoading} onClick={loadSpeciesInfo}>
+                {speciesInfoLoading ? 'Retrying...' : 'Retry'}
+              </button>
+            </p>
+          )}
+          {!speciesInfo && !speciesInfoError && <p className="muted">Loading...</p>}
+          {speciesInfo && (
+            <div className="species-info">
+              {(speciesInfo.poisonous_to_humans || speciesInfo.poisonous_to_pets) && (
+                <p className="species-warning">
+                  ⚠️ Toxic to {[
+                    speciesInfo.poisonous_to_humans && 'humans',
+                    speciesInfo.poisonous_to_pets && 'pets',
+                  ]
+                    .filter(Boolean)
+                    .join(' and ')}
+                </p>
+              )}
+              {speciesInfo.description && <p>{speciesInfo.description}</p>}
+              <dl className="species-facts">
+                {speciesInfo.family && (
+                  <>
+                    <dt>Family</dt>
+                    <dd>{speciesInfo.family}</dd>
+                  </>
+                )}
+                {speciesInfo.plant_type && (
+                  <>
+                    <dt>Type</dt>
+                    <dd>{speciesInfo.plant_type}</dd>
+                  </>
+                )}
+                {speciesInfo.cycle && (
+                  <>
+                    <dt>Cycle</dt>
+                    <dd>{speciesInfo.cycle}</dd>
+                  </>
+                )}
+                {speciesInfo.origin && (
+                  <>
+                    <dt>Origin</dt>
+                    <dd>{speciesInfo.origin}</dd>
+                  </>
+                )}
+                {speciesInfo.dimensions && (
+                  <>
+                    <dt>Mature size</dt>
+                    <dd>{speciesInfo.dimensions}</dd>
+                  </>
+                )}
+                {speciesInfo.care_level && (
+                  <>
+                    <dt>Care level</dt>
+                    <dd>{speciesInfo.care_level}</dd>
+                  </>
+                )}
+                {speciesInfo.growth_rate && (
+                  <>
+                    <dt>Growth rate</dt>
+                    <dd>{speciesInfo.growth_rate}</dd>
+                  </>
+                )}
+                {speciesInfo.drought_tolerant !== null && (
+                  <>
+                    <dt>Drought tolerant</dt>
+                    <dd>{speciesInfo.drought_tolerant ? 'Yes' : 'No'}</dd>
+                  </>
+                )}
+                {speciesInfo.pruning_months && (
+                  <>
+                    <dt>Best pruned in</dt>
+                    <dd>{speciesInfo.pruning_months}</dd>
+                  </>
+                )}
+              </dl>
+              {speciesInfo.sunlight_description && (
+                <p className="muted small">☀️ {speciesInfo.sunlight_description}</p>
+              )}
+              {speciesInfo.watering_description && (
+                <p className="muted small">💧 {speciesInfo.watering_description}</p>
+              )}
+              <div className="actions">
+                {plant.custom_species_id ? (
+                  <Link to={`/species/${plant.custom_species_id}/edit`} className="button small secondary">
+                    Edit species info
+                  </Link>
+                ) : (
+                  <button
+                    type="button"
+                    className="button small secondary"
+                    disabled={savingToDatabase}
+                    onClick={handleSaveToMyDatabase}
+                  >
+                    {savingToDatabase ? 'Saving...' : 'Save a copy to my database'}
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+        </section>
+      )}
 
       <section className="card">
         <h2>Care schedule</h2>

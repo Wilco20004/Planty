@@ -3,6 +3,8 @@ import Dashboard from './pages/Dashboard';
 import PlantForm from './pages/PlantForm';
 import PlantDetail from './pages/PlantDetail';
 import Settings from './pages/Settings';
+import SpeciesList from './pages/SpeciesList';
+import SpeciesForm from './pages/SpeciesForm';
 
 export default function App() {
   return (
@@ -16,6 +18,7 @@ export default function App() {
             Plants
           </NavLink>
           <NavLink to="/plants/new">Add plant</NavLink>
+          <NavLink to="/species">Species DB</NavLink>
           <NavLink to="/settings">Settings</NavLink>
         </nav>
       </header>
@@ -25,6 +28,9 @@ export default function App() {
           <Route path="/plants/new" element={<PlantForm />} />
           <Route path="/plants/:id" element={<PlantDetail />} />
           <Route path="/plants/:id/edit" element={<PlantForm />} />
+          <Route path="/species" element={<SpeciesList />} />
+          <Route path="/species/new" element={<SpeciesForm />} />
+          <Route path="/species/:id/edit" element={<SpeciesForm />} />
           <Route path="/settings" element={<Settings />} />
         </Routes>
       </main>

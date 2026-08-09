@@ -38,16 +38,29 @@ plantsRouter.get('/:id', (req, res) => {
 });
 
 plantsRouter.post('/', (req, res) => {
-  const { name, species, scientific_name, location, light_requirement, notes } = req.body;
+  const { name, species, scientific_name, location, light_requirement, notes, perenual_species_id, custom_species_id } =
+    req.body;
   if (!name || typeof name !== 'string') {
     return res.status(400).json({ error: 'name is required' });
   }
   const id = uuid();
   const now = new Date().toISOString();
   db.prepare(
-    `INSERT INTO plants (id, name, species, scientific_name, location, light_requirement, photo_path, notes, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, NULL, ?, ?, ?)`
-  ).run(id, name, species ?? null, scientific_name ?? null, location ?? null, light_requirement ?? null, notes ?? null, now, now);
+    `INSERT INTO plants (id, name, species, scientific_name, location, light_requirement, photo_path, notes, perenual_species_id, custom_species_id, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, NULL, ?, ?, ?, ?, ?)`
+  ).run(
+    id,
+    name,
+    species ?? null,
+    scientific_name ?? null,
+    location ?? null,
+    light_requirement ?? null,
+    notes ?? null,
+    perenual_species_id ?? null,
+    custom_species_id ?? null,
+    now,
+    now
+  );
   res.status(201).json(loadPlant(id));
 });
 
@@ -55,18 +68,21 @@ plantsRouter.put('/:id', (req, res) => {
   const existing = db.prepare('SELECT * FROM plants WHERE id = ?').get(req.params.id) as Plant | undefined;
   if (!existing) return res.status(404).json({ error: 'Plant not found' });
 
-  const { name, species, scientific_name, location, light_requirement, notes } = req.body;
+  const { name, species, scientific_name, location, light_requirement, notes, perenual_species_id, custom_species_id } =
+    req.body;
   const now = new Date().toISOString();
   db.prepare(
-    `UPDATE plants SET name = ?, species = ?, scientific_name = ?, location = ?, light_requirement = ?, notes = ?, updated_at = ?
+    `UPDATE plants SET name = ?, species = ?, scientific_name = ?, location = ?, light_requirement = ?, notes = ?, perenual_species_id = ?, custom_species_id = ?, updated_at = ?
      WHERE id = ?`
   ).run(
-    name ?? existing.name,
-    species ?? null,
-    scientific_name ?? null,
-    location ?? null,
-    light_requirement ?? null,
-    notes ?? null,
+    name !== undefined ? name : existing.name,
+    species !== undefined ? species : existing.species,
+    scientific_name !== undefined ? scientific_name : existing.scientific_name,
+    location !== undefined ? location : existing.location,
+    light_requirement !== undefined ? light_requirement : existing.light_requirement,
+    notes !== undefined ? notes : existing.notes,
+    perenual_species_id !== undefined ? perenual_species_id : existing.perenual_species_id,
+    custom_species_id !== undefined ? custom_species_id : existing.custom_species_id,
     now,
     req.params.id
   );

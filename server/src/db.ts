@@ -67,7 +67,47 @@ db.exec(`
     value TEXT
   );
 
+  CREATE TABLE IF NOT EXISTS plant_lookup_cache (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL,
+    created_at TEXT NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS custom_species (
+    id TEXT PRIMARY KEY,
+    common_name TEXT NOT NULL,
+    scientific_name TEXT,
+    thumbnail TEXT,
+    light_requirement TEXT,
+    sunlight_description TEXT,
+    watering_interval_days INTEGER,
+    watering_description TEXT,
+    family TEXT,
+    plant_type TEXT,
+    cycle TEXT,
+    origin TEXT,
+    dimensions TEXT,
+    description TEXT,
+    care_level TEXT,
+    growth_rate TEXT,
+    drought_tolerant INTEGER,
+    indoor INTEGER,
+    poisonous_to_humans INTEGER,
+    poisonous_to_pets INTEGER,
+    pruning_months TEXT,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+  );
+
   CREATE INDEX IF NOT EXISTS idx_care_tasks_plant ON care_tasks(plant_id);
   CREATE INDEX IF NOT EXISTS idx_sensors_plant ON sensors(plant_id);
   CREATE INDEX IF NOT EXISTS idx_sensor_readings_sensor ON sensor_readings(sensor_id);
 `);
+
+const plantColumns = db.prepare('PRAGMA table_info(plants)').all() as { name: string }[];
+if (!plantColumns.some((c) => c.name === 'perenual_species_id')) {
+  db.exec('ALTER TABLE plants ADD COLUMN perenual_species_id INTEGER');
+}
+if (!plantColumns.some((c) => c.name === 'custom_species_id')) {
+  db.exec('ALTER TABLE plants ADD COLUMN custom_species_id TEXT');
+}

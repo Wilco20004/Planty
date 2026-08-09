@@ -1,4 +1,16 @@
-import { CareTask, MqttSettings, MqttStatus, Plant, PlantWithTasks, Sensor } from '../types';
+import {
+  CareTask,
+  CustomSpecies,
+  MqttSettings,
+  MqttStatus,
+  Plant,
+  PlantLookupDetail,
+  PlantLookupMatch,
+  PlantLookupSettings,
+  PlantWithTasks,
+  Sensor,
+  SpeciesInfo,
+} from '../types';
 
 async function request<T>(url: string, options: RequestInit = {}): Promise<T> {
   const res = await fetch(url, {
@@ -48,4 +60,19 @@ export const api = {
   saveMqttSettings: (data: Partial<MqttSettings>) =>
     request<MqttSettings>('/api/settings/mqtt', { method: 'PUT', body: JSON.stringify(data) }),
   getMqttStatus: () => request<MqttStatus>('/api/settings/mqtt/status'),
+
+  getPlantLookupSettings: () => request<PlantLookupSettings>('/api/settings/plant-lookup'),
+  savePlantLookupSettings: (data: Partial<PlantLookupSettings>) =>
+    request<PlantLookupSettings>('/api/settings/plant-lookup', { method: 'PUT', body: JSON.stringify(data) }),
+  searchPlantLookup: (q: string) =>
+    request<PlantLookupMatch[]>(`/api/plant-lookup/search?q=${encodeURIComponent(q)}`),
+  getPlantLookupDetail: (id: number) => request<PlantLookupDetail>(`/api/plant-lookup/${id}`),
+
+  listCustomSpecies: () => request<CustomSpecies[]>('/api/custom-species'),
+  getCustomSpecies: (id: string) => request<CustomSpecies>(`/api/custom-species/${id}`),
+  createCustomSpecies: (data: Partial<SpeciesInfo>) =>
+    request<CustomSpecies>('/api/custom-species', { method: 'POST', body: JSON.stringify(data) }),
+  updateCustomSpecies: (id: string, data: Partial<SpeciesInfo>) =>
+    request<CustomSpecies>(`/api/custom-species/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteCustomSpecies: (id: string) => request<void>(`/api/custom-species/${id}`, { method: 'DELETE' }),
 };
