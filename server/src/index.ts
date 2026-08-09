@@ -11,6 +11,7 @@ import { settingsRouter } from './routes/settings';
 import { uploadsRouter } from './routes/uploads';
 import { plantLookupRouter } from './routes/plantLookup';
 import { customSpeciesRouter } from './routes/customSpecies';
+import { calendarRouter } from './routes/calendar';
 import { initMqtt } from './services/mqtt';
 import { startScheduler } from './services/scheduler';
 
@@ -29,6 +30,7 @@ app.use('/api/sensors', sensorsRouter);
 app.use('/api/settings', settingsRouter);
 app.use('/api/plant-lookup', plantLookupRouter);
 app.use('/api/custom-species', customSpeciesRouter);
+app.use('/api/calendar.ics', calendarRouter);
 app.use('/api', uploadsRouter);
 
 app.get('/api/health', (_req, res) => res.json({ ok: true }));

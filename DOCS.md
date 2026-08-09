@@ -90,6 +90,21 @@ is how Planty names the sensor for a task whose type is "watering" and whose
 label hasn't been customized. If you give a watering task a custom label,
 rename that filter to match, or just use the first card.
 
+## Calendar export
+
+Go to **Settings → Calendar export** inside Planty for an `.ics` feed of
+every care task (one recurring event per task, starting on its next due
+date and repeating on its interval).
+
+- **Download once**: click "Download .ics file" and import it into whatever
+  calendar app you like.
+- **Keep it live in Home Assistant**: add it as a **Remote Calendar**
+  integration (Settings → Devices & Services → Add Integration → "Remote
+  Calendar"), using the URL shown on the Calendar export card. Home
+  Assistant's backend fetches this URL directly (not through your browser),
+  so it needs the add-on's direct port (`:8080`), not the ingress panel
+  address — the card fills this in for you automatically.
+
 ## Notes
 
 - Data (plant details, photos, schedule) is stored in this addon's `/data`

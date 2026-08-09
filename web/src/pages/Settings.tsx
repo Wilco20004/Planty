@@ -154,6 +154,28 @@ export default function Settings() {
         </form>
       )}
     </div>
+
+    <div className="card form-card">
+      <h2>Calendar export</h2>
+      <p className="muted">
+        Every care task (watering, fertilizing, etc.) is available as a recurring event in a standard{' '}
+        <code>.ics</code> calendar feed — one event per task, starting on its next due date and repeating on
+        its interval.
+      </p>
+      <p>
+        <a href="api/calendar.ics" download="planty.ics" className="button secondary">
+          Download .ics file
+        </a>
+      </p>
+      <p className="muted small">
+        To keep it in sync automatically in Home Assistant, add it as a{' '}
+        <strong>Remote Calendar</strong> integration (Settings → Devices & Services → Add Integration →
+        "Remote Calendar") using this URL — Home Assistant fetches it directly, so use the add-on's direct
+        port rather than the ingress panel address:
+        <br />
+        <code>{`http://${window.location.hostname}:8080/api/calendar.ics`}</code>
+      </p>
+    </div>
     </>
   );
 }
