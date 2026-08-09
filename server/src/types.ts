@@ -15,6 +15,8 @@ export interface Plant {
   notes: string | null;
   perenual_species_id: number | null;
   custom_species_id: string | null;
+  fertilizer_type: string | null;
+  fertilizer_next_date: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -95,6 +97,7 @@ export interface SpeciesInfo {
   description: string | null;
   care_level: string | null;
   growth_rate: string | null;
+  soil: string | null;
   drought_tolerant: boolean | null;
   indoor: boolean | null;
   poisonous_to_humans: boolean | null;

@@ -27,6 +27,8 @@ db.exec(`
     light_requirement TEXT,
     photo_path TEXT,
     notes TEXT,
+    fertilizer_type TEXT,
+    fertilizer_next_date TEXT,
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL
   );
@@ -90,6 +92,7 @@ db.exec(`
     description TEXT,
     care_level TEXT,
     growth_rate TEXT,
+    soil TEXT,
     drought_tolerant INTEGER,
     indoor INTEGER,
     poisonous_to_humans INTEGER,
@@ -110,4 +113,15 @@ if (!plantColumns.some((c) => c.name === 'perenual_species_id')) {
 }
 if (!plantColumns.some((c) => c.name === 'custom_species_id')) {
   db.exec('ALTER TABLE plants ADD COLUMN custom_species_id TEXT');
+}
+if (!plantColumns.some((c) => c.name === 'fertilizer_type')) {
+  db.exec('ALTER TABLE plants ADD COLUMN fertilizer_type TEXT');
+}
+if (!plantColumns.some((c) => c.name === 'fertilizer_next_date')) {
+  db.exec('ALTER TABLE plants ADD COLUMN fertilizer_next_date TEXT');
+}
+
+const customSpeciesColumns = db.prepare('PRAGMA table_info(custom_species)').all() as { name: string }[];
+if (!customSpeciesColumns.some((c) => c.name === 'soil')) {
+  db.exec('ALTER TABLE custom_species ADD COLUMN soil TEXT');
 }

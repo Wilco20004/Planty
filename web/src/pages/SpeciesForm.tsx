@@ -177,6 +177,14 @@ export default function SpeciesForm() {
           <input value={form.growth_rate || ''} onChange={(e) => setForm({ ...form, growth_rate: e.target.value })} />
         </label>
         <label>
+          Soil
+          <input
+            value={form.soil || ''}
+            onChange={(e) => setForm({ ...form, soil: e.target.value })}
+            placeholder="e.g. Well-draining potting mix"
+          />
+        </label>
+        <label>
           Best pruned in
           <input
             value={form.pruning_months || ''}

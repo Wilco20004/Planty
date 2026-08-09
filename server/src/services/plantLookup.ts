@@ -231,6 +231,7 @@ export async function getSpeciesDetail(id: number): Promise<PlantLookupDetail> {
     description: gated(row.description),
     care_level: gated(row.care_level),
     growth_rate: gated(row.growth_rate),
+    soil: joinList(row.soil),
     drought_tolerant: typeof row.drought_tolerant === 'boolean' ? row.drought_tolerant : null,
     indoor: typeof row.indoor === 'boolean' ? row.indoor : null,
     poisonous_to_humans: typeof row.poisonous_to_humans === 'boolean' ? row.poisonous_to_humans : null,

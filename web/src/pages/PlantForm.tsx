@@ -202,6 +202,22 @@ export default function PlantForm() {
           </select>
         </label>
         <label>
+          Fertilizer type
+          <input
+            value={form.fertilizer_type || ''}
+            onChange={(e) => setForm({ ...form, fertilizer_type: e.target.value })}
+            placeholder="e.g. Balanced 10-10-10 liquid"
+          />
+        </label>
+        <label>
+          Fertilizer next date
+          <input
+            type="date"
+            value={form.fertilizer_next_date?.slice(0, 10) || ''}
+            onChange={(e) => setForm({ ...form, fertilizer_next_date: e.target.value || null })}
+          />
+        </label>
+        <label>
           Notes
           <textarea
             value={form.notes || ''}

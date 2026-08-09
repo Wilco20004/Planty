@@ -6,6 +6,11 @@ import StatusBadge from '../components/StatusBadge';
 
 const TASK_TYPES = Object.keys(TASK_TYPE_LABELS) as CareTaskType[];
 
+function isFertilizerOverdue(nextDate: string | null): boolean {
+  if (!nextDate) return false;
+  return nextDate.slice(0, 10) < new Date().toISOString().slice(0, 10);
+}
+
 export default function PlantDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -114,6 +119,12 @@ export default function PlantDetail() {
           {plant.scientific_name && <p className="muted italic">{plant.scientific_name}</p>}
           {plant.location && <p>📍 {plant.location}</p>}
           {plant.light_requirement && <p>☀️ {LIGHT_LABELS[plant.light_requirement]}</p>}
+          {(plant.fertilizer_type || plant.fertilizer_next_date) && (
+            <p className={isFertilizerOverdue(plant.fertilizer_next_date) ? 'error' : undefined}>
+              🌱 {plant.fertilizer_type || 'Fertilizer'}
+              {plant.fertilizer_next_date && ` — next ${plant.fertilizer_next_date.slice(0, 10)}`}
+            </p>
+          )}
           {plant.notes && <p className="notes">{plant.notes}</p>}
           <div className="actions">
             <Link to={`/plants/${plant.id}/edit`} className="button secondary">
@@ -192,6 +203,12 @@ export default function PlantDetail() {
                   <>
                     <dt>Growth rate</dt>
                     <dd>{speciesInfo.growth_rate}</dd>
+                  </>
+                )}
+                {speciesInfo.soil && (
+                  <>
+                    <dt>Soil</dt>
+                    <dd>{speciesInfo.soil}</dd>
                   </>
                 )}
                 {speciesInfo.drought_tolerant !== null && (

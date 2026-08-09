@@ -32,6 +32,7 @@ function rowToSpecies(row: any): CustomSpecies {
     description: row.description,
     care_level: row.care_level,
     growth_rate: row.growth_rate,
+    soil: row.soil,
     drought_tolerant: intToBool(row.drought_tolerant),
     indoor: intToBool(row.indoor),
     poisonous_to_humans: intToBool(row.poisonous_to_humans),
@@ -73,9 +74,9 @@ export function createCustomSpecies(data: Partial<SpeciesInfo>): CustomSpecies {
     `INSERT INTO custom_species (
       id, common_name, scientific_name, thumbnail, light_requirement, sunlight_description,
       watering_interval_days, watering_description, family, plant_type, cycle, origin, dimensions,
-      description, care_level, growth_rate, drought_tolerant, indoor, poisonous_to_humans,
+      description, care_level, growth_rate, soil, drought_tolerant, indoor, poisonous_to_humans,
       poisonous_to_pets, pruning_months, created_at, updated_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
   ).run(
     id,
     data.common_name || 'Unnamed plant',
@@ -93,6 +94,7 @@ export function createCustomSpecies(data: Partial<SpeciesInfo>): CustomSpecies {
     data.description ?? null,
     data.care_level ?? null,
     data.growth_rate ?? null,
+    data.soil ?? null,
     boolToInt(data.drought_tolerant),
     boolToInt(data.indoor),
     boolToInt(data.poisonous_to_humans),
@@ -113,7 +115,7 @@ export function updateCustomSpecies(id: string, data: Partial<SpeciesInfo>): Cus
     `UPDATE custom_species SET
       common_name = ?, scientific_name = ?, thumbnail = ?, light_requirement = ?, sunlight_description = ?,
       watering_interval_days = ?, watering_description = ?, family = ?, plant_type = ?, cycle = ?, origin = ?,
-      dimensions = ?, description = ?, care_level = ?, growth_rate = ?, drought_tolerant = ?, indoor = ?,
+      dimensions = ?, description = ?, care_level = ?, growth_rate = ?, soil = ?, drought_tolerant = ?, indoor = ?,
       poisonous_to_humans = ?, poisonous_to_pets = ?, pruning_months = ?, updated_at = ?
     WHERE id = ?`
   ).run(
@@ -132,6 +134,7 @@ export function updateCustomSpecies(id: string, data: Partial<SpeciesInfo>): Cus
     merged.description,
     merged.care_level,
     merged.growth_rate,
+    merged.soil,
     boolToInt(merged.drought_tolerant),
     boolToInt(merged.indoor),
     boolToInt(merged.poisonous_to_humans),
