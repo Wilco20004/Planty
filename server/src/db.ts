@@ -102,9 +102,19 @@ db.exec(`
     updated_at TEXT NOT NULL
   );
 
+  CREATE TABLE IF NOT EXISTS plant_journal_entries (
+    id TEXT PRIMARY KEY,
+    plant_id TEXT NOT NULL REFERENCES plants(id) ON DELETE CASCADE,
+    entry_date TEXT NOT NULL,
+    note TEXT,
+    photo_path TEXT,
+    created_at TEXT NOT NULL
+  );
+
   CREATE INDEX IF NOT EXISTS idx_care_tasks_plant ON care_tasks(plant_id);
   CREATE INDEX IF NOT EXISTS idx_sensors_plant ON sensors(plant_id);
   CREATE INDEX IF NOT EXISTS idx_sensor_readings_sensor ON sensor_readings(sensor_id);
+  CREATE INDEX IF NOT EXISTS idx_journal_entries_plant ON plant_journal_entries(plant_id);
 `);
 
 const plantColumns = db.prepare('PRAGMA table_info(plants)').all() as { name: string }[];

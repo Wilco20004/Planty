@@ -12,6 +12,7 @@ import { uploadsRouter } from './routes/uploads';
 import { plantLookupRouter } from './routes/plantLookup';
 import { customSpeciesRouter } from './routes/customSpecies';
 import { calendarRouter } from './routes/calendar';
+import { plantJournalRouter, journalRouter } from './routes/journal';
 import { initMqtt } from './services/mqtt';
 import { startScheduler } from './services/scheduler';
 
@@ -24,9 +25,11 @@ app.use('/uploads', express.static(UPLOADS_DIR));
 
 app.use('/api/plants/:plantId/tasks', plantTasksRouter);
 app.use('/api/plants/:plantId/sensors', plantSensorsRouter);
+app.use('/api/plants/:plantId/journal', plantJournalRouter);
 app.use('/api/plants', plantsRouter);
 app.use('/api/tasks', tasksRouter);
 app.use('/api/sensors', sensorsRouter);
+app.use('/api/journal', journalRouter);
 app.use('/api/settings', settingsRouter);
 app.use('/api/plant-lookup', plantLookupRouter);
 app.use('/api/custom-species', customSpeciesRouter);

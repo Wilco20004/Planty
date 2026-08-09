@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { v4 as uuid } from 'uuid';
 import { db } from '../db';
-import { CareTask, Plant, Sensor } from '../types';
+import { CareTask, JournalEntry, Plant, Sensor } from '../types';
 import { withStatus, worstStatus } from '../services/schedule';
 import { onPlantChanged, onPlantDeleted } from '../services/mqtt';
 
@@ -16,11 +16,15 @@ function loadPlant(id: string) {
   const sensors = db
     .prepare('SELECT * FROM sensors WHERE plant_id = ? ORDER BY created_at ASC')
     .all(id) as Sensor[];
+  const journalEntries = db
+    .prepare('SELECT * FROM plant_journal_entries WHERE plant_id = ? ORDER BY entry_date ASC, created_at ASC')
+    .all(id) as JournalEntry[];
   const tasksWithStatus = tasks.map(withStatus);
   return {
     ...plant,
     care_tasks: tasksWithStatus,
     sensors,
+    journal_entries: journalEntries,
     worst_status: worstStatus(tasksWithStatus.map((t) => t.status)),
   };
 }

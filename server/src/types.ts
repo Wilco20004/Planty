@@ -41,8 +41,18 @@ export interface CareTaskWithStatus extends CareTask {
   days_until_due: number;
 }
 
+export interface JournalEntry {
+  id: string;
+  plant_id: string;
+  entry_date: string;
+  note: string | null;
+  photo_path: string | null;
+  created_at: string;
+}
+
 export interface PlantWithTasks extends Plant {
   care_tasks: CareTaskWithStatus[];
+  journal_entries: JournalEntry[];
   worst_status: TaskStatus | null;
 }
 

@@ -1,6 +1,7 @@
 import {
   CareTask,
   CustomSpecies,
+  JournalEntry,
   MqttSettings,
   MqttStatus,
   Plant,
@@ -75,4 +76,13 @@ export const api = {
   updateCustomSpecies: (id: string, data: Partial<SpeciesInfo>) =>
     request<CustomSpecies>(`api/custom-species/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deleteCustomSpecies: (id: string) => request<void>(`api/custom-species/${id}`, { method: 'DELETE' }),
+
+  addJournalEntry: (plantId: string, data: { entry_date: string; note?: string; photo?: File }) => {
+    const form = new FormData();
+    form.append('entry_date', data.entry_date);
+    if (data.note) form.append('note', data.note);
+    if (data.photo) form.append('photo', data.photo);
+    return request<JournalEntry>(`api/plants/${plantId}/journal`, { method: 'POST', body: form });
+  },
+  deleteJournalEntry: (id: string) => request<void>(`api/journal/${id}`, { method: 'DELETE' }),
 };

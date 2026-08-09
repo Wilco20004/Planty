@@ -17,9 +17,16 @@ export default function PlantDetail() {
   const [plant, setPlant] = useState<PlantWithTasks | null>(null);
   const [error, setError] = useState<string | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
+  const journalPhotoInput = useRef<HTMLInputElement>(null);
 
   const [newTask, setNewTask] = useState({ task_type: 'watering' as CareTaskType, label: '', interval_days: 7 });
   const [newSensor, setNewSensor] = useState({ type: 'moisture' as SensorType, name: '', mqtt_topic: '', unit: '' });
+  const [newJournalEntry, setNewJournalEntry] = useState({
+    entry_date: new Date().toISOString().slice(0, 10),
+    note: '',
+  });
+  const [journalSaving, setJournalSaving] = useState(false);
+  const [journalError, setJournalError] = useState<string | null>(null);
 
   const [speciesInfo, setSpeciesInfo] = useState<SpeciesInfo | null>(null);
   const [speciesInfoError, setSpeciesInfoError] = useState<string | null>(null);
@@ -100,6 +107,32 @@ export default function PlantDetail() {
     await api.createSensor(id, newSensor);
     setNewSensor({ type: 'moisture', name: '', mqtt_topic: '', unit: '' });
     reload();
+  }
+
+  async function handleAddJournalEntry(e: React.FormEvent) {
+    e.preventDefault();
+    if (!id) return;
+    const photo = journalPhotoInput.current?.files?.[0];
+    if (!newJournalEntry.note.trim() && !photo) {
+      setJournalError('Add a note, a photo, or both.');
+      return;
+    }
+    setJournalSaving(true);
+    setJournalError(null);
+    try {
+      await api.addJournalEntry(id, {
+        entry_date: newJournalEntry.entry_date,
+        note: newJournalEntry.note.trim() || undefined,
+        photo,
+      });
+      setNewJournalEntry({ entry_date: new Date().toISOString().slice(0, 10), note: '' });
+      if (journalPhotoInput.current) journalPhotoInput.current.value = '';
+      reload();
+    } catch (e: any) {
+      setJournalError(e.message);
+    } finally {
+      setJournalSaving(false);
+    }
   }
 
   return (
@@ -366,6 +399,65 @@ export default function PlantDetail() {
           />
           <button className="button small" type="submit">
             Add sensor
+          </button>
+        </form>
+      </section>
+
+      <section className="card">
+        <h2>Growth journal</h2>
+        <p className="muted">
+          Log notes and photos over time to track how {plant.name} is growing.
+        </p>
+        {plant.journal_entries.some((e) => e.photo_path) && (
+          <div className="growth-strip">
+            {plant.journal_entries
+              .filter((e) => e.photo_path)
+              .map((e) => (
+                <div key={e.id} className="growth-strip-item">
+                  <img src={`uploads/${e.photo_path}`} alt={e.entry_date.slice(0, 10)} />
+                  <span className="muted small">{e.entry_date.slice(0, 10)}</span>
+                </div>
+              ))}
+          </div>
+        )}
+        {plant.journal_entries.length === 0 && <p className="muted">No journal entries yet.</p>}
+        <ul className="task-list">
+          {[...plant.journal_entries].reverse().map((entry) => (
+            <li key={entry.id} className="task-row journal-entry">
+              <div>
+                <strong>{entry.entry_date.slice(0, 10)}</strong>
+                {entry.note && <p>{entry.note}</p>}
+                {entry.photo_path && (
+                  <img className="journal-photo" src={`uploads/${entry.photo_path}`} alt="" />
+                )}
+              </div>
+              <div className="actions">
+                <button
+                  className="button small danger"
+                  onClick={() => api.deleteJournalEntry(entry.id).then(reload)}
+                >
+                  Remove
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+        {journalError && <p className="error">{journalError}</p>}
+        <form onSubmit={handleAddJournalEntry} className="inline-form">
+          <input
+            type="date"
+            value={newJournalEntry.entry_date}
+            onChange={(e) => setNewJournalEntry({ ...newJournalEntry, entry_date: e.target.value })}
+          />
+          <input
+            placeholder="What's new? (optional)"
+            value={newJournalEntry.note}
+            onChange={(e) => setNewJournalEntry({ ...newJournalEntry, note: e.target.value })}
+            style={{ minWidth: '14rem' }}
+          />
+          <input ref={journalPhotoInput} type="file" accept="image/*" />
+          <button className="button small" type="submit" disabled={journalSaving}>
+            {journalSaving ? 'Adding...' : 'Add entry'}
           </button>
         </form>
       </section>

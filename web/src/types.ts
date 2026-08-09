@@ -50,9 +50,19 @@ export interface Plant {
   updated_at: string;
 }
 
+export interface JournalEntry {
+  id: string;
+  plant_id: string;
+  entry_date: string;
+  note: string | null;
+  photo_path: string | null;
+  created_at: string;
+}
+
 export interface PlantWithTasks extends Plant {
   care_tasks: CareTaskWithStatus[];
   sensors: Sensor[];
+  journal_entries: JournalEntry[];
   worst_status: TaskStatus | null;
 }
 
