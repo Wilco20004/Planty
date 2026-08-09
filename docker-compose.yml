@@ -1,0 +1,12 @@
+services:
+  planty:
+    build: .
+    image: planty:latest
+    container_name: planty
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/data
+    environment:
+      - PORT=8080
