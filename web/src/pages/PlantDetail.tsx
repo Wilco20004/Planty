@@ -102,7 +102,7 @@ export default function PlantDetail() {
       <div className="plant-detail-header">
         <div className="plant-detail-photo">
           {plant.photo_path ? (
-            <img src={`/uploads/${plant.photo_path}`} alt={plant.name} />
+            <img src={`uploads/${plant.photo_path}`} alt={plant.name} />
           ) : (
             <div className="plant-card-photo-placeholder">🪴</div>
           )}

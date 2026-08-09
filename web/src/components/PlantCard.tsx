@@ -7,7 +7,7 @@ export default function PlantCard({ plant }: { plant: PlantWithTasks }) {
     <Link to={`/plants/${plant.id}`} className="plant-card">
       <div className="plant-card-photo">
         {plant.photo_path ? (
-          <img src={`/uploads/${plant.photo_path}`} alt={plant.name} />
+          <img src={`uploads/${plant.photo_path}`} alt={plant.name} />
         ) : (
           <div className="plant-card-photo-placeholder">🪴</div>
         )}
