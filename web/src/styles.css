@@ -451,3 +451,49 @@ body {
   font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
   white-space: pre;
 }
+
+@media (max-width: 640px) {
+  .content {
+    padding: 1rem;
+  }
+
+  .topbar {
+    flex-wrap: wrap;
+    row-gap: 0.5rem;
+  }
+
+  .topbar nav {
+    flex-wrap: wrap;
+    row-gap: 0.4rem;
+    width: 100%;
+  }
+
+  .topbar nav a {
+    white-space: nowrap;
+  }
+
+  .plant-detail-header {
+    flex-direction: column;
+  }
+
+  .plant-detail-photo {
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .plant-detail-photo img,
+  .plant-detail-photo .plant-card-photo-placeholder {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+  }
+
+  .task-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .actions {
+    flex-wrap: wrap;
+  }
+}
