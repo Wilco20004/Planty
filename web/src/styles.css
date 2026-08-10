@@ -426,3 +426,28 @@ body {
   margin-top: 0.5rem;
   display: block;
 }
+
+.mcp-card {
+  max-width: 640px;
+}
+
+.mcp-card h3 {
+  margin: 1.25rem 0 0.35rem;
+  font-size: 1rem;
+}
+
+.code-block {
+  background: var(--green-900);
+  color: var(--green-100);
+  padding: 0.75rem 0.9rem;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  margin: 0.4rem 0 0.9rem;
+}
+
+.code-block code {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  white-space: pre;
+}

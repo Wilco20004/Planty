@@ -176,6 +176,84 @@ export default function Settings() {
         <code>{`http://${window.location.hostname}:8080/api/calendar.ics`}</code>
       </p>
     </div>
+
+    <div className="card form-card mcp-card">
+      <h2>AI species lookup (MCP)</h2>
+      <p className="muted">
+        Planty ships an <a href="https://modelcontextprotocol.io" target="_blank" rel="noreferrer">MCP</a>{' '}
+        server that lets an AI assistant with vision — Claude or Gemini — identify a plant from a photo you
+        show it and add it straight to this species database, with common name, light needs, watering
+        interval, and other care details filled in automatically. It runs as a small local program
+        (<code>mcp/</code> in the Planty repo) that the AI talks to; it doesn't run inside this addon/container.
+      </p>
+      <p className="muted small">
+        On the machine where you run Claude or Gemini, clone the Planty repo (or copy the <code>mcp/</code>{' '}
+        folder) and build it once:
+      </p>
+      <pre className="code-block">
+        <code>{'npm install\nnpm run build:mcp'}</code>
+      </pre>
+      <p className="muted small">
+        This produces <code>mcp/dist/index.js</code>. Point your AI assistant at it and set{' '}
+        <code>PLANTY_API_URL</code> to wherever this Planty instance is reachable from that machine — for
+        example:
+      </p>
+      <pre className="code-block">
+        <code>{`http://${window.location.hostname}:8080`}</code>
+      </pre>
+
+      <h3>Claude Desktop / Claude Code</h3>
+      <p className="muted small">
+        Add this to <code>claude_desktop_config.json</code> (Claude Desktop) or <code>.mcp.json</code> in your
+        project (Claude Code), replacing the path with the actual location of <code>mcp/dist/index.js</code>:
+      </p>
+      <pre className="code-block">
+        <code>{`{
+  "mcpServers": {
+    "planty": {
+      "command": "node",
+      "args": ["/path/to/planty/mcp/dist/index.js"],
+      "env": {
+        "PLANTY_API_URL": "http://${window.location.hostname}:8080"
+      }
+    }
+  }
+}`}</code>
+      </pre>
+      <p className="muted small">
+        Or from a terminal with the Claude Code CLI installed:
+      </p>
+      <pre className="code-block">
+        <code>{`claude mcp add planty --env PLANTY_API_URL=http://${window.location.hostname}:8080 -- node /path/to/planty/mcp/dist/index.js`}</code>
+      </pre>
+
+      <h3>Gemini CLI</h3>
+      <p className="muted small">
+        Add the same <code>mcpServers</code> block to <code>~/.gemini/settings.json</code> (or a project's{' '}
+        <code>.gemini/settings.json</code>):
+      </p>
+      <pre className="code-block">
+        <code>{`{
+  "mcpServers": {
+    "planty": {
+      "command": "node",
+      "args": ["/path/to/planty/mcp/dist/index.js"],
+      "env": {
+        "PLANTY_API_URL": "http://${window.location.hostname}:8080"
+      }
+    }
+  }
+}`}</code>
+      </pre>
+      <p className="muted small">
+        Newer Gemini CLI versions may also support adding it directly, e.g. <code>gemini mcp add</code> — run{' '}
+        <code>gemini mcp add --help</code> to check the exact flags for your installed version.
+      </p>
+      <p className="muted small">
+        Once connected, restart Claude/Gemini and ask it something like "here's a photo of my new plant,
+        identify it and add it to Planty's species list."
+      </p>
+    </div>
     </>
   );
 }

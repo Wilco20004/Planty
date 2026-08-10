@@ -71,6 +71,50 @@ automation:
           message: "{{ trigger.to_state.attributes.friendly_name }} needs watering!"
 ```
 
+## AI species lookup (MCP server)
+
+`mcp/` is a [Model Context Protocol](https://modelcontextprotocol.io) server
+that exposes Planty's custom species database as tools for an MCP-capable AI
+client (e.g. Claude Desktop or Claude Code). Point an AI at a plant photo and
+ask it to identify the species and add it to Planty — the AI does the visual
+identification itself and calls these tools to save the result:
+
+- `search_species` — search local + Perenual species by name (check for
+  duplicates before adding)
+- `get_perenual_species_detail` — pull richer reference data from Perenual by id
+- `list_species` / `get_species` — browse the local database
+- `add_species` — create a new species (only `common_name` is required; the AI
+  fills in whatever care details it can determine)
+- `update_species` / `delete_species` — edit or remove existing entries
+
+Build it once:
+
+```bash
+npm install
+npm run build:mcp
+```
+
+Then point your MCP client at `mcp/dist/index.js`. For Claude Desktop, add to
+its config (`claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "planty": {
+      "command": "node",
+      "args": ["C:/path/to/Planty/mcp/dist/index.js"],
+      "env": {
+        "PLANTY_API_URL": "http://localhost:8080"
+      }
+    }
+  }
+}
+```
+
+Set `PLANTY_API_URL` to wherever your Planty instance is reachable (defaults
+to `http://localhost:8080` if omitted). The MCP server talks to Planty's
+existing REST API — no separate credentials needed.
+
 ## Development
 
 This is an npm workspaces monorepo:
@@ -78,6 +122,8 @@ This is an npm workspaces monorepo:
 - `server/` — Express + TypeScript API, SQLite (better-sqlite3) storage, MQTT
   client for Home Assistant discovery and sensor ingestion.
 - `web/` — React + Vite + TypeScript frontend.
+- `mcp/` — Model Context Protocol server exposing the species database as
+  AI-callable tools (see "AI species lookup" above).
 
 ```bash
 npm install
