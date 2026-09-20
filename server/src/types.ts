@@ -124,3 +124,60 @@ export interface CustomSpecies extends SpeciesInfo {
   created_at: string;
   updated_at: string;
 }
+
+export const LIGHT_LABELS: Record<LightRequirement, string> = {
+  low: 'Low light',
+  medium: 'Medium light',
+  bright_indirect: 'Bright, indirect light',
+  direct: 'Direct sun',
+};
+
+/** Where LabelForge is and which of its templates plant labels use. */
+export interface LabelSettings {
+  /** Host or IP of the machine running the LabelForge add-on. */
+  host: string;
+  port: number;
+  template_id: string;
+  /**
+   * The address this Planty is reachable at, e.g. `http://homeassistant.local:8080`.
+   * A label's QR code links to `<base_url>/plants/<id>`, so scanning it opens
+   * the plant. Blank puts just the plant id in the code.
+   */
+  base_url: string;
+  copies: number;
+}
+
+/** The image block of a LabelForge template, as LabelForge reports it. */
+export interface LabelImageBlock {
+  variable: string | null;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+export interface LabelTemplate {
+  id: string;
+  name: string;
+  label_size: string;
+  variables: string[];
+  /** Which variable, if any, takes a base64 image rather than text. */
+  image_variable: string | null;
+  image: LabelImageBlock | null;
+}
+
+/** How to draw a label's one image. */
+export interface LabelArtRequest {
+  width: number;
+  height: number;
+  qrText: string;
+}
+
+/** What happened to one plant in a batch print. */
+export interface LabelPrintResult {
+  plant_id: string;
+  name: string;
+  ok: boolean;
+  error?: string;
+  warnings: string[];
+}

@@ -2,6 +2,10 @@ import {
   CareTask,
   CustomSpecies,
   JournalEntry,
+  LabelPrintResult,
+  LabelSettings,
+  LabelTemplate,
+  LabelVariable,
   MqttSettings,
   MqttStatus,
   Plant,
@@ -85,4 +89,36 @@ export const api = {
     return request<JournalEntry>(`api/plants/${plantId}/journal`, { method: 'POST', body: form });
   },
   deleteJournalEntry: (id: string) => request<void>(`api/journal/${id}`, { method: 'DELETE' }),
+
+  getLabelSettings: () => request<LabelSettings>('api/labels/settings'),
+  saveLabelSettings: (data: Partial<LabelSettings>) =>
+    request<LabelSettings>('api/labels/settings', { method: 'PUT', body: JSON.stringify(data) }),
+  listLabelTemplates: () => request<LabelTemplate[]>('api/labels/templates'),
+  listLabelVariables: () => request<LabelVariable[]>('api/labels/variables'),
+  printLabels: (plantIds: string[], copies?: number) =>
+    request<{ results: LabelPrintResult[] }>('api/labels/print', {
+      method: 'POST',
+      body: JSON.stringify({ plant_ids: plantIds, copies }),
+    }),
+
+  /** The label as it would print, plus anything the server wants to warn about. */
+  previewLabel: async (plantId: string): Promise<{ blob: Blob; warnings: string[] }> => {
+    const res = await fetch('api/labels/preview', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plant_id: plantId }),
+    });
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({ error: res.statusText }));
+      throw new Error(body.error || `Request failed: ${res.status}`);
+    }
+    let warnings: string[] = [];
+    try {
+      const raw = res.headers.get('X-Label-Warnings');
+      if (raw) warnings = JSON.parse(decodeURIComponent(raw));
+    } catch {
+      /* the picture matters more than the warnings */
+    }
+    return { blob: await res.blob(), warnings };
+  },
 };

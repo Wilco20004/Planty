@@ -142,3 +142,35 @@ export const TASK_TYPE_LABELS: Record<CareTaskType, string> = {
   fertilizing: 'Fertilizing',
   custom: 'Custom',
 };
+
+export interface LabelSettings {
+  host: string;
+  port: number;
+  template_id: string;
+  /** Where this Planty is reachable; a label's QR links to `<base_url>/plants/<id>`. */
+  base_url: string;
+  copies: number;
+}
+
+export interface LabelTemplate {
+  id: string;
+  name: string;
+  label_size: string;
+  variables: string[];
+  image_variable: string | null;
+  image: { variable: string | null; x: number; y: number; width: number; height: number } | null;
+}
+
+export interface LabelVariable {
+  name: string;
+  example: string;
+  what: string;
+}
+
+export interface LabelPrintResult {
+  plant_id: string;
+  name: string;
+  ok: boolean;
+  error?: string;
+  warnings: string[];
+}

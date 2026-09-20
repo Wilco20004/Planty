@@ -105,6 +105,74 @@ date and repeating on its interval).
   so it needs the add-on's direct port (`:8080`), not the ingress panel
   address — the card fills this in for you automatically.
 
+## Plant labels
+
+Planty can print a label for each plant on a Brother QL, through the
+[LabelForge](https://github.com/wilco20004/LabelForge) add-on. Open the
+**Labels** tab, enter LabelForge's address, load its templates, tick the plants
+you want and print. Labelling a whole shelf in one go is the point — the
+selection is a checklist, not one plant at a time.
+
+Planty talks to LabelForge from its **server**, not from your browser. Behind
+Ingress the Planty page is served over HTTPS, and a browser will not let an
+HTTPS page call a plain-HTTP add-on on the LAN. Doing it server-side also means
+the printer's address is configured once rather than on every phone and laptop.
+
+### Designing the template
+
+Design the template in LabelForge; Planty only fills it in. Use these variables
+in its text fields — anything else prints blank, and Planty warns you before it
+does:
+
+`name`, `species`, `scientific`, `location`, `light`, `watering`, `next_water`,
+`tasks`, `notes`, `added`, `id`, `link`.
+
+Give the template's **image an override variable** (any name). Planty fills it
+with a QR code, drawn to that block's exact pixel size.
+
+### A template to start from
+
+A 62 x 29 mm die-cut label (DK-11209) with the QR code on the left. Run this
+once against LabelForge and the template appears in its list, ready to edit:
+
+```bash
+curl -X POST http://<labelforge-host>:8095/api/templates \
+  -H 'Content-Type: application/json' -d '{
+  "name": "Plant label 62x29",
+  "label_size": "62x29",
+  "image": { "data": "", "variable": "qr", "x": 12, "y": 8, "width": 180, "height": 255 },
+  "text_fields": [
+    { "id": "name",  "x": 208, "y": 10,  "width": 476, "height": 50, "font_size": 40, "bold": true,  "align": "left", "text": "{{name}}" },
+    { "id": "spec",  "x": 208, "y": 62,  "width": 476, "height": 34, "font_size": 26, "bold": false, "align": "left", "text": "{{scientific}}" },
+    { "id": "where", "x": 208, "y": 100, "width": 476, "height": 64, "font_size": 24, "bold": false, "align": "left", "text": "{{location}} · {{light}}" },
+    { "id": "water", "x": 208, "y": 172, "width": 476, "height": 62, "font_size": 26, "bold": true,  "align": "left", "text": "Water {{watering}}\nNext {{next_water}}" }
+  ]
+}'
+```
+
+Two things are worth knowing when laying a template out:
+
+- **Give the image block room.** The QR is drawn at a whole number of pixels per
+  module, and below 3 px a module it stops scanning reliably — Planty says so
+  before you print. The 180 x 255 block above gives 4 px a module for a link
+  like `http://homeassistant.local:8080/plants/<id>`. A longer address needs
+  more room, because the plant id alone is a 36-character UUID.
+- **A text field that wraps runs past its own height.** LabelForge wraps text to
+  the field's width and keeps going downwards, so a long plant name will
+  overwrite whatever you placed below it. Leave room for two lines.
+
+### Scanning a label
+
+Set **This Planty's address** to wherever Planty is reachable from your phone —
+for example `http://homeassistant.local:8080`. Each label's QR then links to
+`<that>/plants/<id>`, so scanning a label on a pot opens that plant's page, with
+its care schedule and journal. Leave the address blank and the code holds only
+the plant id.
+
+Note that an Ingress URL is not a usable address here: it is a
+browser-authenticated link into Home Assistant, not a stable address for a
+phone's camera to open. Use Planty's own port (8080 by default).
+
 ## Notes
 
 - Data (plant details, photos, schedule) is stored in this addon's `/data`

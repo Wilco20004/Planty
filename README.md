@@ -11,7 +11,7 @@ Runs two ways from the same codebase:
 - **As a Home Assistant addon**, added from this repo as a custom addon
   repository.
 
-## Features (phase 1)
+## Features
 
 - Add plants with species, location, light requirement, photo, and notes.
 - Per-plant care tasks (watering, move-to-brighter-light, fertilizing, or a
@@ -25,12 +25,15 @@ Runs two ways from the same codebase:
 - Link a light or moisture sensor to a plant by MQTT topic (e.g. from
   Zigbee2MQTT, or Home Assistant's `mqtt_statestream`); Planty subscribes and
   shows the latest reading on the plant's page.
+- Print a label for each plant on a Brother QL label printer, through the
+  [LabelForge](https://github.com/wilco20004/LabelForge) add-on: name, species,
+  location, light and watering interval, plus a QR code that opens the plant's
+  page in Planty when you scan it. Label a whole shelf in one go from the
+  **Labels** tab.
 
 Looking for the browser-based 3D print slicer that started here? It now lives
 in its own repository: [flashforge-slicer](https://github.com/wilco20004/flashforge-slicer).
 
-**Phase 2 (planned):** printing plant labels (name, species, light, watering
-interval, location) on a Brother QL700 label printer.
 
 ## Running standalone (Docker)
 
