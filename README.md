@@ -43,7 +43,7 @@ rebuilds.
 
 1. In Home Assistant, go to **Settings → Add-ons → Add-on Store → ⋮ → Repositories**.
 2. Add this repository's URL: `https://github.com/wilco20004/planty`.
-3. Find **Planty** in the store, install, and start it.
+3. Find **Planty** (and, if you want the 3D print slicer, **Planty Slicer**) in the store, install, and start it.
 4. Open it from the sidebar (Ingress) or via the "Open Web UI" link.
 
 The addon's data lives in `/data`, which Home Assistant persists
@@ -122,11 +122,19 @@ Flashforge Adventurer 5M / 5M Pro: load STL/3MF/OBJ, arrange, slice with
 Orca-derived Flashforge profiles, preview toolpaths and download (or send over
 LAN) ready-to-print G-code. Everything runs in the browser — nothing is uploaded.
 
-```bash
-npm install
-npm run dev:slicer     # http://localhost:5173
-npm run build:slicer   # static site in slicer/dist
-```
+Run it any of these ways:
+
+- **Home Assistant add-on**: this repository already provides the Planty add-on;
+  the same add-on store entry also lists **Planty Slicer**. Install it and open
+  **Slicer** from the sidebar (Ingress).
+- **Docker**: `docker compose up -d planty-slicer` then open `http://<host>:8081`.
+- **Static hosting / development**:
+
+  ```bash
+  npm install
+  npm run dev:slicer     # http://localhost:5173
+  npm run build:slicer   # static site in slicer/dist
+  ```
 
 See [`slicer/README.md`](slicer/README.md) for features, architecture and limits.
 
