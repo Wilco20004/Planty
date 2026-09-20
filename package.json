@@ -13,7 +13,8 @@
     "dev:mcp": "npm run dev --workspace mcp",
     "build": "npm run build --workspace web && npm run build --workspace server",
     "build:mcp": "npm run build --workspace mcp",
-    "start": "npm run start --workspace server"
+    "start": "npm run start --workspace server",
+    "test": "npm run test --workspace server"
   },
   "dependencies": {
     "claude-code": "^1.0.0"

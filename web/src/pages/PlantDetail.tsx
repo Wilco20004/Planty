@@ -163,6 +163,9 @@ export default function PlantDetail() {
             <Link to={`/plants/${plant.id}/edit`} className="button secondary">
               Edit
             </Link>
+            <Link to={`/labels?plant=${plant.id}`} className="button secondary">
+              Print label
+            </Link>
             <button className="button danger" onClick={handleDeletePlant}>
               Delete
             </button>

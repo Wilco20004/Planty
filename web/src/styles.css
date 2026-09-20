@@ -497,3 +497,68 @@ body {
     flex-wrap: wrap;
   }
 }
+
+/* ---- Plant labels ------------------------------------------------------- */
+.label-plant-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0;
+}
+
+.label-plant-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--gray-300);
+}
+
+.label-plant-list li:last-child {
+  border-bottom: none;
+}
+
+.label-plant-list label {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  cursor: pointer;
+  min-width: 0;
+}
+
+.label-plant-name {
+  font-weight: 600;
+}
+
+.label-results {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0 0;
+}
+
+.label-results li {
+  padding: 0.15rem 0;
+}
+
+.label-preview {
+  margin-top: 1rem;
+}
+
+/* A label is mostly white, so it needs something behind it to show its edges. */
+.label-preview img {
+  max-width: 100%;
+  border: 1px solid var(--gray-300);
+  border-radius: 6px;
+  background: repeating-conic-gradient(#f0f0f0 0% 25%, #ffffff 0% 50%) 50% / 14px 14px;
+}
+
+.label-variables {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0;
+  font-size: 0.85rem;
+}
+
+.label-variables li {
+  padding: 0.2rem 0;
+}
