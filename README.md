@@ -115,6 +115,21 @@ Set `PLANTY_API_URL` to wherever your Planty instance is reachable (defaults
 to `http://localhost:8080` if omitted). The MCP server talks to Planty's
 existing REST API — no separate credentials needed.
 
+## Planty Slicer (browser-based slicer for the Flashforge Adventurer 5M)
+
+`slicer/` is a standalone, fully client-side 3D print slicer focused on the
+Flashforge Adventurer 5M / 5M Pro: load STL/3MF/OBJ, arrange, slice with
+Orca-derived Flashforge profiles, preview toolpaths and download (or send over
+LAN) ready-to-print G-code. Everything runs in the browser — nothing is uploaded.
+
+```bash
+npm install
+npm run dev:slicer     # http://localhost:5173
+npm run build:slicer   # static site in slicer/dist
+```
+
+See [`slicer/README.md`](slicer/README.md) for features, architecture and limits.
+
 ## Development
 
 This is an npm workspaces monorepo:
@@ -124,6 +139,8 @@ This is an npm workspaces monorepo:
 - `web/` — React + Vite + TypeScript frontend.
 - `mcp/` — Model Context Protocol server exposing the species database as
   AI-callable tools (see "AI species lookup" above).
+- `slicer/` — browser-based 3D print slicer for the Flashforge Adventurer 5M
+  (React + Three.js + a Clipper-based slicing engine in a Web Worker).
 
 ```bash
 npm install

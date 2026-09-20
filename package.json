@@ -5,7 +5,8 @@
   "workspaces": [
     "server",
     "web",
-    "mcp"
+    "mcp",
+    "slicer"
   ],
   "scripts": {
     "dev:server": "npm run dev --workspace server",
@@ -13,7 +14,10 @@
     "dev:mcp": "npm run dev --workspace mcp",
     "build": "npm run build --workspace web && npm run build --workspace server",
     "build:mcp": "npm run build --workspace mcp",
-    "start": "npm run start --workspace server"
+    "start": "npm run start --workspace server",
+    "dev:slicer": "npm run dev --workspace slicer",
+    "build:slicer": "npm run build --workspace slicer",
+    "test:slicer": "npm run test --workspace slicer"
   },
   "dependencies": {
     "claude-code": "^1.0.0"
